@@ -2,7 +2,9 @@
 
 A small program to quickly get sprite's bounding box (left, top, right, bottom position) in the spritesheet
 
-You can either download [here]() or build from source
+![Animated demonstration](demo.gif)
+
+You can either download [here] or build from source
 
 ## How to build from source
 
@@ -14,3 +16,5 @@ cd SpriteExtractor
 pyinstaller build.spec
 ```
 * After that, a new application will be created in the dist/ folder
+
+[here]: https://github.com/NearHuscarl/SpriteExtractor/releases/tag/1.0.0
