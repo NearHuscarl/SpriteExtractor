@@ -48,21 +48,31 @@ class App(Application):
         self.settingFrame = Labelframe(self.infoFrame, text='Settings')
         self.bboxFrame = Labelframe(self.infoFrame, text='Bounding Box')
         self.spriteFrame = Labelframe(self.infoFrame, text='Sprite Preview')
+        self.templateStrFrame = Labelframe(self.infoFrame, text='Template String')
 
-        self.previewFrame.grid(column=0, row=0, sticky='nsew')
-        self.infoFrame.grid(column=1, row=0, sticky='n')
+        self.previewFrame.grid(row=0, column=0, sticky='nsew')
+        self.previewFrame.grid_columnconfigure(0, weight=1)
+        self.previewFrame.grid_columnconfigure(2, weight=1)
+        self.previewFrame.grid_rowconfigure(0, weight=1)
+        self.previewFrame.grid_rowconfigure(2, weight=1)
 
-        self.settingFrame.grid(column=0, columnspan=2, row=0, padx=self.padding, pady=self.padding, sticky='ew')
+        self.infoFrame.grid(row=0, column=1, sticky='n')
+
+        self.settingFrame.grid(row=0, column=0, columnspan=2, padx=self.padding, pady=(self.padding, 0), sticky='ew')
         self.settingFrame.grid_columnconfigure(1, weight=1)
 
-        self.bboxFrame.grid(column=0, row=1, padx=self.padding, pady=self.padding, sticky='ew')
+        self.bboxFrame.grid(row=1, column=0, padx=self.padding, pady=(self.padding, 0), sticky='ew')
         self.bboxFrame.grid_columnconfigure(1, weight=1)
 
-        self.spriteFrame.grid(column=1, row=1, padx=self.padding, pady=self.padding, sticky='nsw')
+        self.spriteFrame.grid(row=1, column=1, padx=self.padding, pady=(self.padding, 0), sticky='nsw')
         self.spriteFrame.grid_columnconfigure(0, weight=1)
         self.spriteFrame.grid_columnconfigure(2, weight=1)
         self.spriteFrame.grid_rowconfigure(0, weight=1)
         self.spriteFrame.grid_rowconfigure(2, weight=1)
+
+        self.templateStrFrame.grid(row=2, column=0, columnspan=2, padx=self.padding, pady=self.padding, sticky='ew')
+        self.templateStrFrame.grid_columnconfigure(0, weight=1)
+        self.templateStrFrame.grid_rowconfigure(0, weight=1)
 
         self.spritesheetPanel = Label(self.previewFrame)
         self.spritesheetPanel.bind('<Button 1>', self.on_click_image)
@@ -95,18 +105,21 @@ class App(Application):
         self.leftEntry = Entry(self.bboxFrame, state='readonly')
         self.rightEntry = Entry(self.bboxFrame, state='readonly')
 
+        self.templateEntry = Entry(self.templateStrFrame)
+        self.outputStrEntry = Entry(self.templateStrFrame, state='readonly')
+
         self.copyTopButton = Button(self.bboxFrame, image=self.copyImage,
-                                    command=lambda: self.on_click_copy_button(self.topEntry))
+                                    command=lambda: self.to_clipboard(self.topEntry.get()))
         self.copyBottomButton = Button(self.bboxFrame, image=self.copyImage,
-                                       command=lambda: self.on_click_copy_button(self.bottomEntry))
+                                       command=lambda: self.to_clipboard(self.bottomEntry.get()))
         self.copyLeftButton = Button(self.bboxFrame, image=self.copyImage,
-                                     command=lambda: self.on_click_copy_button(self.leftEntry))
+                                     command=lambda: self.to_clipboard(self.leftEntry.get()))
         self.copyRightButton = Button(self.bboxFrame, image=self.copyImage,
-                                      command=lambda: self.on_click_copy_button(self.rightEntry))
+                                      command=lambda: self.to_clipboard(self.rightEntry.get()))
 
         self.spritePanel = Label(self.spriteFrame, border=2)
 
-        self.spritesheetPanel.grid(row=0, column=0)
+        self.spritesheetPanel.grid(row=1, column=1)
 
         self.spritesheetPathLabel.grid(row=0, column=0, sticky='e')
         self.spritesheetPathEntry.grid(row=0, column=1, columnspan=2, padx=(self.padding, 0), sticky='ew')
@@ -140,6 +153,9 @@ class App(Application):
         self.copyLeftButton.grid(row=2, column=2, padx=self.padding)
         self.copyRightButton.grid(row=3, column=2, padx=self.padding)
 
+        self.templateEntry.grid(row=0, column=0, sticky='ew', padx=self.padding, pady=(self.padding, 0))
+        self.outputStrEntry.grid(row=1, column=0, sticky='ew', padx=self.padding, pady=self.padding)
+
         self.spritePanel.grid(row=1, column=1, sticky='nsew')
         self.init_value()
 
@@ -153,6 +169,8 @@ class App(Application):
         self.set_spritesheet_panel()
         self.set_transparent_color(self.spritesheet_image.getpixel((0, 0)))
         self.set_text(self.borderThicknessEntry, 1)
+
+        self.set_text(self.templateEntry, 'AddSprite("", BoundingBox({L}, {T}, {R}, {B}), texture);')
 
     def update_spritesheet_list(self):
         spritesheet_path = self.spritesheetPathEntry.get()
@@ -239,10 +257,12 @@ class App(Application):
         self.sprite_photo = ImageTk.PhotoImage(self.sprite_image)
         self.spritePanel.configure(image=self.sprite_photo)
 
-    def on_click_copy_button(self, entry):
-        self.master.clipboard_clear()
-        self.master.clipboard_append(entry.get())
-        self.master.update()  # now it stays on the clipboard after the window is closed
+        self.set_readonly_text(self.outputStrEntry, self.templateEntry.get()
+                               .replace('{L}', str(left))
+                               .replace('{T}', str(top))
+                               .replace('{R}', str(right))
+                               .replace('{B}', str(bottom)))
+        self.to_clipboard(self.outputStrEntry.get())
 
 
 def main():

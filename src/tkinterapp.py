@@ -30,6 +30,11 @@ class Application(Frame):
 
         self.master.geometry('{}x{}+{}+{}'.format(width, height, x, y))
 
+    def to_clipboard(self, text):
+        self.master.clipboard_clear()
+        self.master.clipboard_append(text)
+        self.master.update()  # now it stays on the clipboard after the window is closed
+
     @classmethod
     def set_text(cls, entry, text):
         entry.delete(0, END)
