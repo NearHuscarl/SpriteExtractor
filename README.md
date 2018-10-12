@@ -19,4 +19,4 @@ pyinstaller build.spec
 ```
 * After that, a new application will be created in the dist/ folder
 
-[here]: https://github.com/NearHuscarl/SpriteExtractor/releases/tag/1.0.0
+[here]: https://github.com/NearHuscarl/SpriteExtractor/releases
