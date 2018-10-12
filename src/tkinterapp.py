@@ -11,6 +11,7 @@ class Application(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)
         self.master: Tk = master
+        self.master.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     @classmethod
     def validate_number_value(cls, current_char):
@@ -35,13 +36,6 @@ class Application(Frame):
         self.master.clipboard_append(text)
         self.master.update()  # now it stays on the clipboard after the window is closed
 
-    @classmethod
-    def set_text(cls, entry, text):
-        entry.delete(0, END)
-        entry.insert(0, text)
+    def on_closing(self):
+        pass  # override me
 
-    @classmethod
-    def set_readonly_text(cls, entry, text):
-        entry.configure(state='normal')
-        cls.set_text(entry, text)
-        entry.configure(state='readonly')

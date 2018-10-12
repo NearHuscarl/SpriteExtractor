@@ -1,7 +1,7 @@
 import os
 from PIL import Image
 
-from common import DEFAULT_SPRITESHEET_PATH
+from common import default_settings
 from imageutil import (
     have_all_border,
     have_top_border,
@@ -62,7 +62,7 @@ def get_sprite_bbox(coord, spritesheet, border_color, border_thickness=1):
 
 
 def main():
-    spritesheet_path = os.path.join(DEFAULT_SPRITESHEET_PATH, 'simon.png')
+    spritesheet_path = os.path.join(default_settings['spritesheet_folder'], 'simon.png')
     spritesheet = Image.open(spritesheet_path).convert('RGB')
     border_color = spritesheet.getpixel((0, 0))
 
