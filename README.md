@@ -4,9 +4,11 @@ A small program to quickly get sprite's bounding box (left, top, right, bottom p
 
 ![Animated demonstration](demo.gif)
 
+## Download
+
 You can either download [here] or build from source
 
-## How to build from source
+## Build from source
 
 * Install [pyinstaller](https://www.pyinstaller.org/)
 * Open your terminal and execute the following commands
