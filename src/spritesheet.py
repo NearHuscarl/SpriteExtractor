@@ -32,14 +32,14 @@ def get_sprite_bbox(coord, spritesheet, border_color, border_thickness=1):
 
     while not have_all_border(sprite, border_color, border_thickness):
 
-        if left <= 0 or top <= 0 or right >= spritesheet.width or bottom >= spritesheet.height:
+        if left <= 0 or top <= 0 or right > spritesheet.width or bottom > spritesheet.height:
             return None
 
         while not have_top_border(sprite, border_color, border_thickness) and top > 0:
             top -= 1
             sprite = spritesheet.crop((left, top, right, bottom))
 
-        while not have_bottom_border(sprite, border_color, border_thickness) and bottom < spritesheet.height:
+        while not have_bottom_border(sprite, border_color, border_thickness) and bottom <= spritesheet.height:
             bottom += 1
             sprite = spritesheet.crop((left, top, right, bottom))
 
@@ -47,7 +47,7 @@ def get_sprite_bbox(coord, spritesheet, border_color, border_thickness=1):
             left -= 1
             sprite = spritesheet.crop((left, top, right, bottom))
 
-        while not have_right_border(sprite, border_color, border_thickness) and right < spritesheet.width:
+        while not have_right_border(sprite, border_color, border_thickness) and right <= spritesheet.width:
             right += 1
             sprite = spritesheet.crop((left, top, right, bottom))
 

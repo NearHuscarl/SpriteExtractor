@@ -25,7 +25,7 @@ from PIL import ImageTk, Image
 from common import default_settings
 from tkinterapp import Application
 import spritesheet
-from color import rgb_to_hex, hex_to_rgb
+from color import rgba_to_hex, hex_to_rgba
 
 
 class App(Application):
@@ -232,13 +232,13 @@ class App(Application):
 
         if selected_spritesheet != '':
             image_path = os.path.join(self.spritesheet_folder.get(), selected_spritesheet + '.png')
-            self.spritesheet_image = Image.open(image_path).convert('RGB')
+            self.spritesheet_image = Image.open(image_path).convert('RGBA')
             self.spritesheet_photo = ImageTk.PhotoImage(self.spritesheet_image)
             self.spritesheetPanel.configure(image=self.spritesheet_photo)
 
-    def set_transparent_color(self, rgb_color):
-        self.transparent_color.set(rgb_to_hex(rgb_color))
-        self.trans_color_photo = ImageTk.PhotoImage(Image.new(self.spritesheet_image.mode, (19, 19), rgb_color))
+    def set_transparent_color(self, rgba_color):
+        self.transparent_color.set(rgba_to_hex(rgba_color))
+        self.trans_color_photo = ImageTk.PhotoImage(Image.new(self.spritesheet_image.mode, (19, 19), rgba_color))
         self.transColorPanel.configure(image=self.trans_color_photo)
 
     def get_default_transparent_color(self):
@@ -283,7 +283,7 @@ class App(Application):
         bbox = spritesheet.get_sprite_bbox(
             (e.x, e.y),
             self.spritesheet_image,
-            hex_to_rgb(self.transparent_color.get()),
+            hex_to_rgba(self.transparent_color.get()),
             int(self.border_thickness.get()))
 
         if bbox is None:
