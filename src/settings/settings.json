@@ -1,6 +1,0 @@
-{
-    "auto_copy_to_clipboard": true,
-    "border_thickness": 1,
-    "spritesheet_folder": "C:\\Users\\bebi\\Github\\SpriteExtractor\\src\\spritesheets",
-    "template_str": "AddSprite(\"\", BoundingBox({L}, {T}, {R}, {B}), texture);"
-}

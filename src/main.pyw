@@ -1,4 +1,5 @@
 import os
+from glob import glob
 import pathlib
 import json
 from tkinter import (
@@ -193,11 +194,19 @@ class App(Application):
         else:
             settings = default_settings
 
-        self.spritesheet_folder.set(settings['spritesheet_folder'])
-        self.update_spritesheet_list()
+        if os.path.isdir(settings['spritesheet_folder']):
+            self.spritesheet_folder.set(settings['spritesheet_folder'])
+            self.update_spritesheet_list()
+        if glob(os.path.join(self.spritesheet_folder.get(), '*.png')):
+            try:
+                current_index = settings['current_spritesheet']
+                self.spritesheetCombobox.current(current_index)
+            except Exception:  # selection index out of range
+                pass
 
-        self.set_spritesheet_panel()
-        self.set_transparent_color(self.spritesheet_image.getpixel((0, 0)))
+            self.set_spritesheet_panel()
+            self.set_transparent_color(self.get_default_transparent_color())
+
         self.border_thickness.set(settings['border_thickness'])
 
         self.auto_copy_to_clipboard.set(settings['auto_copy_to_clipboard'])
@@ -232,6 +241,9 @@ class App(Application):
         self.trans_color_photo = ImageTk.PhotoImage(Image.new(self.spritesheet_image.mode, (19, 19), rgb_color))
         self.transColorPanel.configure(image=self.trans_color_photo)
 
+    def get_default_transparent_color(self):
+        return self.spritesheet_image.getpixel((0, 0))
+
     def resize(self):
         width = self.spritesheet_photo.width() + self.infoFrame.winfo_width()
         height = max(self.spritesheet_photo.height(), self.infoFrame.winfo_height())
@@ -239,7 +251,7 @@ class App(Application):
         self.master.geometry('{}x{}'.format(width, height))
 
     def on_change_spritesheet_folder(self):
-        spritesheet_path = filedialog.askdirectory()
+        spritesheet_path = filedialog.askdirectory(title='Select spritesheet folder')
 
         if spritesheet_path != '':
             self.spritesheet_folder.set(spritesheet_path)
@@ -247,7 +259,7 @@ class App(Application):
 
     def on_select_spritesheet(self, e):
         self.set_spritesheet_panel()
-        self.set_transparent_color(self.spritesheet_image.getpixel((0, 0)))
+        self.set_transparent_color(self.get_default_transparent_color())
         self.resize()
         self.center_window()
 
@@ -300,6 +312,7 @@ class App(Application):
         try:
             settings = dict(
                 spritesheet_folder=self.spritesheet_folder.get(),
+                current_spritesheet=self.spritesheetCombobox.current(),
                 border_thickness=self.border_thickness.get(),
                 template_str=self.template_str.get(),
                 auto_copy_to_clipboard=self.auto_copy_to_clipboard.get(),
