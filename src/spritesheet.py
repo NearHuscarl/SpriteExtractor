@@ -8,7 +8,9 @@ from imageutil import (
     have_bottom_border,
     have_left_border,
     have_right_border,
+    crop,
 )
+from boundingbox import BoundingBox
 
 debugging: bool = False
 
@@ -23,46 +25,39 @@ def get_sprite_bbox(coord, spritesheet, border_color, border_thickness=1):
         return None
 
     # get bounding box surrounding selected pixel
-    left = x - 1
-    top = y - 1
-    right = x + 2
-    bottom = y + 2
-
-    sprite = spritesheet.crop((left, top, right, bottom))
+    bbox = BoundingBox(x-1, y-1, x+2, y+2)
+    sprite = crop(spritesheet, bbox)
 
     while not have_all_border(sprite, border_color, border_thickness):
 
-        if left <= 0 or top <= 0 or right > spritesheet.width or bottom > spritesheet.height:
+        if bbox.left <= 0 or bbox.top <= 0 or bbox.right > spritesheet.width or bbox.bottom > spritesheet.height:
             return None
 
-        while not have_top_border(sprite, border_color, border_thickness) and top > 0:
-            top -= 1
-            sprite = spritesheet.crop((left, top, right, bottom))
+        while not have_top_border(sprite, border_color, border_thickness) and bbox.top > 0:
+            bbox.top -= 1
+            sprite = crop(spritesheet, bbox)
 
-        while not have_bottom_border(sprite, border_color, border_thickness) and bottom <= spritesheet.height:
-            bottom += 1
-            sprite = spritesheet.crop((left, top, right, bottom))
+        while not have_bottom_border(sprite, border_color, border_thickness) and bbox.bottom <= spritesheet.height:
+            bbox.bottom += 1
+            sprite = crop(spritesheet, bbox)
 
-        while not have_left_border(sprite, border_color, border_thickness) and left > 0:
-            left -= 1
-            sprite = spritesheet.crop((left, top, right, bottom))
+        while not have_left_border(sprite, border_color, border_thickness) and bbox.left > 0:
+            bbox.left -= 1
+            sprite = crop(spritesheet, bbox)
 
-        while not have_right_border(sprite, border_color, border_thickness) and right <= spritesheet.width:
-            right += 1
-            sprite = spritesheet.crop((left, top, right, bottom))
+        while not have_right_border(sprite, border_color, border_thickness) and bbox.right <= spritesheet.width:
+            bbox.right += 1
+            sprite = crop(spritesheet, bbox)
 
     if debugging:
-        print('left:', left)
-        print('top:', top)
-        print('right:', right)
-        print('bottom:', bottom, '\n')
+        print(str(bbox))
         # sprite.show()
 
-    return left, top, right, bottom
+    return bbox
 
 
 def main():
-    spritesheet_path = os.path.join(DEFAULT_SETTINGS['spritesheet_folder'], 'simon.png')
+    spritesheet_path = os.path.join(DEFAULT_SETTINGS['spritesheet_folder'], 'simon2.png')
     spritesheet = Image.open(spritesheet_path).convert('RGB')
     border_color = spritesheet.getpixel((0, 0))
 

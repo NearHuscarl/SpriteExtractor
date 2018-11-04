@@ -6,7 +6,7 @@ A small program to quickly get sprite's bounding box (left, top, right, bottom p
 
 ## Template string
 
-Here are all the available placholders to populate template string
+Here are all of the available placholders to populate template string
 
 | Placeholder | Description                         |
 |:-----------:|-------------------------------------|

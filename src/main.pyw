@@ -119,28 +119,28 @@ class App(Application):
         self.borderThicknessEntry = Entry(self.settingFrame, validate='key', validatecommand=validate_cmd,
                                           textvariable=self.border_thickness)
 
-        self.topLabel = Label(self.bboxFrame, text='top')
-        self.bottomLabel = Label(self.bboxFrame, text='bottom')
-        self.leftLabel = Label(self.bboxFrame, text='left')
-        self.rightLabel = Label(self.bboxFrame, text='right')
-        self.widthLabel = Label(self.bboxFrame, text='width')
-        self.heightLabel = Label(self.bboxFrame, text='height')
+        self.leftLabel = Label(self.bboxFrame, text='Left')
+        self.topLabel = Label(self.bboxFrame, text='Top')
+        self.rightLabel = Label(self.bboxFrame, text='Right')
+        self.bottomLabel = Label(self.bboxFrame, text='Bottom')
+        self.widthLabel = Label(self.bboxFrame, text='Width')
+        self.heightLabel = Label(self.bboxFrame, text='Height')
 
-        self.topEntry = Entry(self.bboxFrame, state='readonly', textvariable=self.bbox_top)
-        self.bottomEntry = Entry(self.bboxFrame, state='readonly', textvariable=self.bbox_bottom)
         self.leftEntry = Entry(self.bboxFrame, state='readonly', textvariable=self.bbox_left)
+        self.topEntry = Entry(self.bboxFrame, state='readonly', textvariable=self.bbox_top)
         self.rightEntry = Entry(self.bboxFrame, state='readonly', textvariable=self.bbox_right)
+        self.bottomEntry = Entry(self.bboxFrame, state='readonly', textvariable=self.bbox_bottom)
         self.widthEntry = Entry(self.bboxFrame, state='readonly', textvariable=self.bbox_width)
         self.heightEntry = Entry(self.bboxFrame, state='readonly', textvariable=self.bbox_height)
 
+        self.copyLeftButton = Button(self.bboxFrame, image=self.copyImage,
+                                     command=lambda: self.to_clipboard(self.bbox_left.get()))
         self.copyTopButton = Button(self.bboxFrame, image=self.copyImage,
                                     command=lambda: self.to_clipboard(self.bbox_top.get()))
-        self.copyBottomButton = Button(self.bboxFrame, image=self.copyImage,
-                                       command=lambda: self.to_clipboard(self.bbox_top.get()))
-        self.copyLeftButton = Button(self.bboxFrame, image=self.copyImage,
-                                     command=lambda: self.to_clipboard(self.bbox_top.get()))
         self.copyRightButton = Button(self.bboxFrame, image=self.copyImage,
-                                      command=lambda: self.to_clipboard(self.bbox_top.get()))
+                                      command=lambda: self.to_clipboard(self.bbox_right.get()))
+        self.copyBottomButton = Button(self.bboxFrame, image=self.copyImage,
+                                       command=lambda: self.to_clipboard(self.bbox_bottom.get()))
         self.copyWidthButton = Button(self.bboxFrame, image=self.copyImage,
                                       command=lambda: self.to_clipboard(self.bbox_width.get()))
         self.copyHeightButton = Button(self.bboxFrame, image=self.copyImage,
@@ -172,24 +172,24 @@ class App(Application):
         self.borderThicknessEntry.grid(row=3, column=1, columnspan=3, sticky='ew',
                                        padx=self.padding, pady=(0, self.padding))
 
-        self.topLabel.grid(row=0, column=0, sticky='e', padx=self.padding, pady=self.padding)
-        self.bottomLabel.grid(row=1, column=0, sticky='e', padx=self.padding, pady=self.padding)
-        self.leftLabel.grid(row=2, column=0, sticky='e', padx=self.padding, pady=self.padding)
-        self.rightLabel.grid(row=3, column=0, sticky='e', padx=self.padding, pady=self.padding)
+        self.leftLabel.grid(row=0, column=0, sticky='e', padx=self.padding, pady=self.padding)
+        self.topLabel.grid(row=1, column=0, sticky='e', padx=self.padding, pady=self.padding)
+        self.rightLabel.grid(row=2, column=0, sticky='e', padx=self.padding, pady=self.padding)
+        self.bottomLabel.grid(row=3, column=0, sticky='e', padx=self.padding, pady=self.padding)
         self.widthLabel.grid(row=4, column=0, sticky='e', padx=self.padding, pady=self.padding)
         self.heightLabel.grid(row=5, column=0, sticky='e', padx=self.padding, pady=self.padding)
 
-        self.topEntry.grid(row=0, column=1, sticky='ew')
-        self.bottomEntry.grid(row=1, column=1, sticky='ew')
-        self.leftEntry.grid(row=2, column=1, sticky='ew')
-        self.rightEntry.grid(row=3, column=1, sticky='ew')
+        self.leftEntry.grid(row=0, column=1, sticky='ew')
+        self.topEntry.grid(row=1, column=1, sticky='ew')
+        self.rightEntry.grid(row=2, column=1, sticky='ew')
+        self.bottomEntry.grid(row=3, column=1, sticky='ew')
         self.widthEntry.grid(row=4, column=1, sticky='ew')
         self.heightEntry.grid(row=5, column=1, sticky='ew')
 
-        self.copyTopButton.grid(row=0, column=2, padx=self.padding)
-        self.copyBottomButton.grid(row=1, column=2, padx=self.padding)
-        self.copyLeftButton.grid(row=2, column=2, padx=self.padding)
-        self.copyRightButton.grid(row=3, column=2, padx=self.padding)
+        self.copyLeftButton.grid(row=0, column=2, padx=self.padding)
+        self.copyTopButton.grid(row=1, column=2, padx=self.padding)
+        self.copyRightButton.grid(row=2, column=2, padx=self.padding)
+        self.copyBottomButton.grid(row=3, column=2, padx=self.padding)
         self.copyWidthButton.grid(row=4, column=2, padx=self.padding)
         self.copyHeightButton.grid(row=5, column=2, padx=self.padding)
 
@@ -305,31 +305,29 @@ class App(Application):
         if bbox is None:
             return
 
-        left, top, right, bottom = bbox
+        self.bbox_left.set(bbox.left)
+        self.bbox_top.set(bbox.top)
+        self.bbox_right.set(bbox.right)
+        self.bbox_bottom.set(bbox.bottom)
+        self.bbox_width.set(bbox.width())
+        self.bbox_height.set(bbox.height())
 
-        self.bbox_left.set(left)
-        self.bbox_top.set(top)
-        self.bbox_right.set(right)
-        self.bbox_bottom.set(bottom)
-        self.bbox_width.set(right - left)
-        self.bbox_height.set(bottom - top)
-
-        self.sprite_image = self.spritesheet_image.crop((left, top, right, bottom))
+        self.sprite_image = self.spritesheet_image.crop(bbox.tuple())
         self.sprite_photo = ImageTk.PhotoImage(self.sprite_image)
         self.spritePanel.configure(image=self.sprite_photo)
-        self.populate_template_string(left, top, right, bottom)
+        self.populate_template_string(bbox)
 
-    def populate_template_string(self, left, top, right, bottom):
+    def populate_template_string(self, bbox):
         if not self.auto_copy_to_clipboard.get():
             return
 
         self.template_str_out.set(self.template_str.get()
-                                  .replace('{L}', str(left))
-                                  .replace('{T}', str(top))
-                                  .replace('{R}', str(right))
-                                  .replace('{B}', str(bottom))
-                                  .replace('{W}', str(right - left))
-                                  .replace('{H}', str(bottom - top)))
+                                  .replace('{L}', str(bbox.left))
+                                  .replace('{T}', str(bbox.top))
+                                  .replace('{R}', str(bbox.right))
+                                  .replace('{B}', str(bbox.bottom))
+                                  .replace('{W}', str(bbox.width()))
+                                  .replace('{H}', str(bbox.height())))
         self.to_clipboard(self.template_str_out.get())
 
     def on_closing(self):
