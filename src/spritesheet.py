@@ -49,6 +49,9 @@ def get_sprite_bbox(coord, spritesheet, border_color, border_thickness=1):
             bbox.right += 1
             sprite = crop(spritesheet, bbox)
 
+    # after have_all_border() return False we have a bounding box that has extra one pixel border
+    bbox = BoundingBox(bbox.left + 1, bbox.top + 1, bbox.right - 1, bbox.bottom - 1)
+
     if debugging:
         print(str(bbox))
         # sprite.show()

@@ -12,12 +12,13 @@ class BoundingBox(object):
         self.bottom = bottom
 
     def __eq__(self, other):
-        if isinstance(other, BoundingBox):
-            return (self.left == other.left and
-                    self.top == other.top and
-                    self.right == other.right and
-                    self.bottom == other.bottom)
-        return False
+        if not isinstance(other, BoundingBox):
+            return False
+
+        return (self.left == other.left and
+                self.top == other.top and
+                self.right == other.right and
+                self.bottom == other.bottom)
 
     def __str__(self):
         return '[left:{}, top:{}, right:{}, bottom:{}]'.format(
