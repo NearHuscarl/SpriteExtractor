@@ -22,7 +22,7 @@ from tkinter.ttk import (
 
 from PIL import ImageTk, Image
 
-from common import default_settings
+from common import DEFAULT_SETTINGS
 from tkinterapp import Application
 import spritesheet
 from color import rgba_to_hex, hex_to_rgba
@@ -55,6 +55,8 @@ class App(Application):
         self.bbox_top = IntVar()
         self.bbox_right = IntVar()
         self.bbox_bottom = IntVar()
+        self.bbox_width = IntVar()
+        self.bbox_height = IntVar()
         self.template_str_out = StringVar()
         self.auto_copy_to_clipboard = BooleanVar()
 
@@ -121,11 +123,15 @@ class App(Application):
         self.bottomLabel = Label(self.bboxFrame, text='bottom')
         self.leftLabel = Label(self.bboxFrame, text='left')
         self.rightLabel = Label(self.bboxFrame, text='right')
+        self.widthLabel = Label(self.bboxFrame, text='width')
+        self.heightLabel = Label(self.bboxFrame, text='height')
 
         self.topEntry = Entry(self.bboxFrame, state='readonly', textvariable=self.bbox_top)
         self.bottomEntry = Entry(self.bboxFrame, state='readonly', textvariable=self.bbox_bottom)
         self.leftEntry = Entry(self.bboxFrame, state='readonly', textvariable=self.bbox_left)
         self.rightEntry = Entry(self.bboxFrame, state='readonly', textvariable=self.bbox_right)
+        self.widthEntry = Entry(self.bboxFrame, state='readonly', textvariable=self.bbox_width)
+        self.heightEntry = Entry(self.bboxFrame, state='readonly', textvariable=self.bbox_height)
 
         self.copyTopButton = Button(self.bboxFrame, image=self.copyImage,
                                     command=lambda: self.to_clipboard(self.bbox_top.get()))
@@ -135,6 +141,10 @@ class App(Application):
                                      command=lambda: self.to_clipboard(self.bbox_top.get()))
         self.copyRightButton = Button(self.bboxFrame, image=self.copyImage,
                                       command=lambda: self.to_clipboard(self.bbox_top.get()))
+        self.copyWidthButton = Button(self.bboxFrame, image=self.copyImage,
+                                      command=lambda: self.to_clipboard(self.bbox_width.get()))
+        self.copyHeightButton = Button(self.bboxFrame, image=self.copyImage,
+                                       command=lambda: self.to_clipboard(self.bbox_height.get()))
 
         self.spritePanel = Label(self.spriteFrame, border=2)
 
@@ -166,16 +176,22 @@ class App(Application):
         self.bottomLabel.grid(row=1, column=0, sticky='e', padx=self.padding, pady=self.padding)
         self.leftLabel.grid(row=2, column=0, sticky='e', padx=self.padding, pady=self.padding)
         self.rightLabel.grid(row=3, column=0, sticky='e', padx=self.padding, pady=self.padding)
+        self.widthLabel.grid(row=4, column=0, sticky='e', padx=self.padding, pady=self.padding)
+        self.heightLabel.grid(row=5, column=0, sticky='e', padx=self.padding, pady=self.padding)
 
         self.topEntry.grid(row=0, column=1, sticky='ew')
         self.bottomEntry.grid(row=1, column=1, sticky='ew')
         self.leftEntry.grid(row=2, column=1, sticky='ew')
         self.rightEntry.grid(row=3, column=1, sticky='ew')
+        self.widthEntry.grid(row=4, column=1, sticky='ew')
+        self.heightEntry.grid(row=5, column=1, sticky='ew')
 
         self.copyTopButton.grid(row=0, column=2, padx=self.padding)
         self.copyBottomButton.grid(row=1, column=2, padx=self.padding)
         self.copyLeftButton.grid(row=2, column=2, padx=self.padding)
         self.copyRightButton.grid(row=3, column=2, padx=self.padding)
+        self.copyWidthButton.grid(row=4, column=2, padx=self.padding)
+        self.copyHeightButton.grid(row=5, column=2, padx=self.padding)
 
         self.autoCopyCheckbutton.grid(row=0, column=0, sticky='w', padx=self.padding)
         self.templateEntry.grid(row=1, column=0, sticky='ew', padx=self.padding, pady=(self.padding, 0))
@@ -192,7 +208,7 @@ class App(Application):
             with open(self.settings_path) as file:
                 settings = json.load(file)
         else:
-            settings = default_settings
+            settings = DEFAULT_SETTINGS
 
         if os.path.isdir(settings['spritesheet_folder']):
             self.spritesheet_folder.set(settings['spritesheet_folder'])
@@ -295,18 +311,26 @@ class App(Application):
         self.bbox_top.set(top)
         self.bbox_right.set(right)
         self.bbox_bottom.set(bottom)
+        self.bbox_width.set(right - left)
+        self.bbox_height.set(bottom - top)
 
         self.sprite_image = self.spritesheet_image.crop((left, top, right, bottom))
         self.sprite_photo = ImageTk.PhotoImage(self.sprite_image)
         self.spritePanel.configure(image=self.sprite_photo)
+        self.populate_template_string(left, top, right, bottom)
 
-        if self.auto_copy_to_clipboard.get():
-            self.template_str_out.set(self.template_str.get()
-                                      .replace('{L}', str(left))
-                                      .replace('{T}', str(top))
-                                      .replace('{R}', str(right))
-                                      .replace('{B}', str(bottom)))
-            self.to_clipboard(self.template_str_out.get())
+    def populate_template_string(self, left, top, right, bottom):
+        if not self.auto_copy_to_clipboard.get():
+            return
+
+        self.template_str_out.set(self.template_str.get()
+                                  .replace('{L}', str(left))
+                                  .replace('{T}', str(top))
+                                  .replace('{R}', str(right))
+                                  .replace('{B}', str(bottom))
+                                  .replace('{W}', str(right - left))
+                                  .replace('{H}', str(bottom - top)))
+        self.to_clipboard(self.template_str_out.get())
 
     def on_closing(self):
         try:
