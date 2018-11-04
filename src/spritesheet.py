@@ -27,11 +27,13 @@ def get_sprite_bbox(coord, spritesheet, border_color, border_thickness=1):
     # get bounding box surrounding selected pixel
     bbox = BoundingBox(x-1, y-1, x+2, y+2)
     sprite = crop(spritesheet, bbox)
+    # since the option can be 0, we need at least 1 pixel thickness to detect border, after that we subtract the result
+    border_thickness += 1
 
     while not have_all_border(sprite, border_color, border_thickness):
 
         if bbox.left <= 0 or bbox.top <= 0 or bbox.right > spritesheet.width or bbox.bottom > spritesheet.height:
-            return None
+            return BoundingBox.empty_bbox()
 
         while not have_top_border(sprite, border_color, border_thickness) and bbox.top > 0:
             bbox.top -= 1
